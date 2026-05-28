@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>E-Rapor Digital - SMPK 3 PENABUR</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Poppins', sans-serif; }
     .bg-penabur { background-color: #0F4C81; }
@@ -13,22 +13,22 @@
     .border-penabur { border-color: #0F4C81; }
   </style>
 </head>
-<body class="bg-slate-100 min-h-screen flex flex-col justify-between">
+<body class="bg-slate-50 min-h-screen flex flex-col justify-between">
 
   <div id="loginPage" class="flex-grow flex items-center justify-center p-4">
     <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border-t-8 border-penabur text-center">
-      <div class="w-20 h-20 bg-amber-400 rounded-full mx-auto flex items-center justify-center shadow-inner mb-4 border-2 border-blue-900">
+      <div class="w-20 h-20 bg-amber-400 rounded-full mx-auto flex items-center justify-center shadow-md mb-4 border-2 border-blue-900">
         <span class="text-blue-900 font-bold text-2xl">P3</span>
       </div>
       <h2 class="text-2xl font-bold text-gray-800 uppercase tracking-wide">SMPK 3 PENABUR</h2>
-      <p class="text-[11px] text-gray-400 font-bold uppercase tracking-widest mb-6">Sistem Informasi Penilaian Siswa</p>
+      <p class="text-[11px] text-gray-400 font-bold uppercase tracking-widest mb-6">Sistem Informasi Nilai Siswa</p>
       
       <div class="text-left mb-6">
         <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Nomor Induk Siswa Nasional (NISN)</label>
         <input type="text" id="nisnInput" placeholder="Masukkan NISN Anda" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-800 text-center font-bold text-lg tracking-widest">
       </div>
       
-      <button onclick="prosesLogin()" id="loginBtn" class="w-full bg-penabur hover:bg-blue-900 text-white font-bold py-3.5 rounded-xl transition shadow-md uppercase tracking-wider text-xs">
+      <button onclick="prosesLogin()" id="loginBtn" class="w-full bg-penabur hover:bg-blue-950 text-white font-bold py-3.5 rounded-xl transition shadow-md uppercase tracking-wider text-xs">
         <span id="btnText">Masuk Aplikasi</span>
       </button>
       <p id="errorMessage" class="text-red-500 text-xs font-semibold mt-4 hidden bg-red-50 py-2.5 rounded-xl border border-red-100"></p>
@@ -39,11 +39,11 @@
     
     <div class="bg-penabur text-white p-6 rounded-2xl shadow-lg mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
-        <h1 class="text-2xl font-bold tracking-wide">E-Rapor Akademik</h1>
+        <h1 class="text-2xl font-bold tracking-wide">E-Rapor Hasil Belajar</h1>
         <p class="text-amber-300 text-xs font-semibold uppercase tracking-widest mt-0.5">SMPK 3 PENABUR JAKARTA</p>
       </div>
       <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition shadow-sm">
-        Keluar
+        Keluar Aplikasi
       </button>
     </div>
 
@@ -79,7 +79,7 @@
       <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
         <h3 id="txtJudulTabel" class="font-bold text-slate-700 text-sm uppercase tracking-wider">Transkrip Nilai Hasil Belajar</h3>
         <span class="text-[10px] text-red-600 font-bold bg-red-50 border border-red-100 px-3 py-1 rounded-full">
-          *Nilai di bawah KKM 71 otomatis berwarna merah
+          *Nilai di bawah 71 otomatis berwarna merah
         </span>
       </div>
       
@@ -109,13 +109,14 @@
   </div>
 
   <footer class="text-center py-4 text-[10px] text-gray-400 font-medium bg-white border-t border-slate-200/50 w-full tracking-wider uppercase">
-    &copy; 2026 SMPK 3 PENABUR Jakarta. Terintegrasi Cloud Serverless Database.
+    &copy; 2026 SMPK 3 PENABUR Jakarta. Cloud Data Integration.
   </footer>
 
   <script>
-    // ⚠️ MASUKKAN SPREADSHEET ID ANDA YANG TELAH DI-PUBLISH DI SINI
+    // ⚠️ GANTI PADA BAGIAN INI DENGAN ID GOOGLE SPREADSHEET ANDA YANG ASLI
     const SPREADSHEET_ID = '16_q4lRnRWSZtvpNRCo0A4ppciTQAtuFa';
 
+    // Daftar nama mata pelajaran yang sekaligus menjadi NAMA TAB di Google Sheets
     const LIST_MAPEL = [
       "PAK", "PANCASILA", "BAHASA INDONESIA", "MATEMATIKA", "IPA", "IPS", 
       "BAHASA INGGRIS", "PJOK", "INFORMATIKA", "DRAMA", "MUSIK", "RUPA", 
@@ -128,7 +129,8 @@
     let semesterTerpilih = 'GANJIL';
 
     async function ambilBarisGoogleSheet(namaSheet) {
-      const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${namaSheet}`;
+      // Menggunakan encodeURIComponent agar nama sheet dengan spasi (seperti BAHASA INDONESIA) terbaca dengan benar oleh API
+      const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(namaSheet)}`;
       const respon = await fetch(url);
       const teks = await respon.text();
       const jsonMurni = teks.substring(teks.indexOf('{'), teks.lastIndexOf('}') + 1);
@@ -142,15 +144,15 @@
       const errorLabel = document.getElementById('errorMessage');
 
       if (!inputNisn) {
-        tampilkanError("Wajib mengisi nomor NISN!");
+        tampilkanError("Mohon masukkan nomor NISN Anda!");
         return;
       }
 
-      btnText.innerText = "Mengekstrak 22 Lembar Data...";
+      btnText.innerText = "Memproses Database Siswa...";
       errorLabel.classList.add('hidden');
 
       try {
-        // 1. Validasi Identitas Terlebih Dahulu di Sheet1
+        // 1. Validasi Akun Pertama Kali di Sheet1
         const dataSheet1 = await ambilBarisGoogleSheet('Sheet1');
         let indexSiswa = -1;
 
@@ -162,7 +164,7 @@
         }
 
         if (indexSiswa === -1) {
-          tampilkanError("NISN tidak ditemukan pada database kesiswaan!");
+          tampilkanError("NISN tidak terdaftar dalam database kesiswaan!");
           btnText.innerText = "Masuk Aplikasi";
           return;
         }
@@ -174,17 +176,17 @@
           noAbsen: dataSheet1[indexSiswa][3]
         };
 
-        // 2. Tarik Data Secara Simultan dari Sheet2 sampai Sheet22
+        // 2. Tarik Data Secara Simultan Berdasarkan NAMA MAPEL LANGSUNG
         recordsNilaiKompilasi = [];
         let tumpukanPanggilan = [];
 
-        for (let s = 2; s <= 22; s++) {
-          tumpukanPanggilan.push(ambilBarisGoogleSheet(`Sheet${s}`));
-        }
+        LIST_MAPEL.forEach(namaMapel => {
+          tumpukanPanggilan.push(ambilBarisGoogleSheet(namaMapel));
+        });
 
         const dataSemuaSheetMapel = await Promise.all(tumpukanPanggilan);
 
-        // 3. Ekstraksi Nilai SUM 1-10 Berdasarkan NISN Siswa
+        // 3. Rekonstruksi Nilai SUM1-SUM10
         dataSemuaSheetMapel.forEach((barisMapel, index) => {
           let namaMataPelajaran = LIST_MAPEL[index];
 
@@ -192,10 +194,7 @@
             if (barisMapel[m][0] && barisMapel[m][0].toString() === inputNisn) {
               let arraySkor = [];
               
-              // 🔄 PENYESUAIAN INDEKS BARU:
-              // Karena ada kolom Nama di Kolom B (indeks 1), maka:
-              // Kolom C (indeks 2) = Semester
-              // Kolom D s.d M (indeks 3 sampai 12) = Nilai SUM1 - SUM10
+              // Kolom A=NISN | Kolom B=Nama | Kolom C=Semester | Kolom D s.d M = SUM1 - SUM10
               for (let k = 3; k <= 12; k++) {
                 let skorIndividu = barisMapel[m][k];
                 arraySkor.push(skorIndividu !== '' && skorIndividu !== null ? Number(skorIndividu) : 0);
@@ -205,7 +204,7 @@
               let rataRataAkhir = (totalSkor / 10).toFixed(2);
 
               recordsNilaiKompilasi.push({
-                semester: barisMapel[m][2].toString().toUpperCase().trim(), // Semester sekarang di indeks 2 (Kolom C)
+                semester: barisMapel[m][2].toString().toUpperCase().trim(),
                 namaMapel: namaMataPelajaran,
                 scores: arraySkor,
                 rerata: rataRataAkhir
@@ -218,11 +217,12 @@
 
       } catch (err) {
         console.error(err);
-        tampilkanError("Koneksi gagal. Pastikan hak akses Spreadsheet diset Publik!");
+        tampilkanError("Koneksi gagal. Pastikan nama tab Mapel sesuai dan statusnya Publish to Web!");
         btnText.innerText = "Masuk Aplikasi";
       }
     }
 
+    // Fungsi pendukung lainnya (tampilkanError, masukDashboard, gantiSemester, renderKontenTabel, logout) tetap sama seperti sebelumnya...
     function tampilkanError(pesan) {
       const errorLabel = document.getElementById('errorMessage');
       errorLabel.innerText = pesan;
@@ -259,6 +259,7 @@
       renderKontenTabel();
     }
 
+    // Render tabel nilai ke layar
     function renderKontenTabel() {
       const tbody = document.getElementById('tabelNilaiBody');
       tbody.innerHTML = '';
@@ -266,16 +267,16 @@
       const dataSesuaiSemester = recordsNilaiKompilasi.filter(item => item.semester === semesterTerpilih);
 
       if (dataSesuaiSemester.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="12" class="text-center py-10 font-bold text-gray-400 bg-slate-50/50">Belum ada entri nilai yang diinput guru untuk Semester ${semesterTerpilih}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="12" class="text-center py-10 font-bold text-gray-400 bg-slate-50/50">Belum ada rekaman nilai guru untuk Semester ${semesterTerpilih}</td></tr>`;
         return;
       }
 
       dataSesuaiSemester.forEach(item => {
-        let barisHtml = `<tr class="hover:bg-slate-50/80 transition text-center">
+        let barisHtml = `<tr class="hover:bg-slate-50 transition text-center">
           <td class="py-3 px-4 font-bold text-slate-800 text-left border-r bg-white sticky left-0 z-5 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.03)]">${item.namaMapel}</td>`;
         
         item.scores.forEach(score => {
-          let styleWarna = score < 71 ? 'text-red-600 font-extrabold bg-red-50/50' : 'text-slate-600 font-medium';
+          let styleWarna = score < 71 ? 'text-red-600 font-extrabold bg-red-50/40' : 'text-slate-600 font-medium';
           barisHtml += `<td class="py-3 px-1 border-r ${styleWarna}">${score}</td>`;
         });
 
