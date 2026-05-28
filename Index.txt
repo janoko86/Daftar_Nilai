@@ -86,7 +86,7 @@
       <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
         <table class="w-full text-left border-collapse min-w-[1100px]">
           <thead>
-            <tr class="bg-slate-100 text-slate-600 uppercase text-[10px] tracking-wider text-center sticky top-0延 z-10">
+            <tr class="bg-slate-100 text-slate-600 uppercase text-[10px] tracking-wider text-center sticky top-0 z-10">
               <th class="py-4 px-4 font-bold text-left bg-slate-100 sticky left-0 z-20 border-r w-[260px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">Mata Pelajaran</th>
               <th class="py-4 px-1 font-semibold border-r">SUM 1</th>
               <th class="py-4 px-1 font-semibold border-r">SUM 2</th>
@@ -116,7 +116,6 @@
     // ⚠️ MASUKKAN SPREADSHEET ID ANDA YANG TELAH DI-PUBLISH DI SINI
     const SPREADSHEET_ID = '16_q4lRnRWSZtvpNRCo0A4ppciTQAtuFa';
 
-    // Array 21 Nama Mata Pelajaran Sesuai Urutan Eksplisit Kriteria 2 (Sheet2 s.d Sheet22)
     const LIST_MAPEL = [
       "PAK", "PANCASILA", "BAHASA INDONESIA", "MATEMATIKA", "IPA", "IPS", 
       "BAHASA INGGRIS", "PJOK", "INFORMATIKA", "DRAMA", "MUSIK", "RUPA", 
@@ -128,7 +127,6 @@
     let recordsNilaiKompilasi = [];
     let semesterTerpilih = 'GANJIL';
 
-    // Mengambil data murni array baris dan kolom dari Google Visualization API
     async function ambilBarisGoogleSheet(namaSheet) {
       const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${namaSheet}`;
       const respon = await fetch(url);
@@ -176,7 +174,7 @@
           noAbsen: dataSheet1[indexSiswa][3]
         };
 
-        // 2. Tarik Data Secara Paralel (Simultan) dari Sheet2 sampai Sheet22
+        // 2. Tarik Data Secara Simultan dari Sheet2 sampai Sheet22
         recordsNilaiKompilasi = [];
         let tumpukanPanggilan = [];
 
@@ -186,7 +184,7 @@
 
         const dataSemuaSheetMapel = await Promise.all(tumpukanPanggilan);
 
-        // 3. Ekstraksi Nilai SUM 1-10 untuk Tiap Mapel Berdasarkan NISN Siswa
+        // 3. Ekstraksi Nilai SUM 1-10 Berdasarkan NISN Siswa
         dataSemuaSheetMapel.forEach((barisMapel, index) => {
           let namaMataPelajaran = LIST_MAPEL[index];
 
@@ -194,18 +192,20 @@
             if (barisMapel[m][0] && barisMapel[m][0].toString() === inputNisn) {
               let arraySkor = [];
               
-              // Kolom C s.d L (indeks data ke-2 sampai ke-11) menampung nilai SUM1-SUM10
-              for (let k = 2; k <= 11; k++) {
+              // 🔄 PENYESUAIAN INDEKS BARU:
+              // Karena ada kolom Nama di Kolom B (indeks 1), maka:
+              // Kolom C (indeks 2) = Semester
+              // Kolom D s.d M (indeks 3 sampai 12) = Nilai SUM1 - SUM10
+              for (let k = 3; k <= 12; k++) {
                 let skorIndividu = barisMapel[m][k];
                 arraySkor.push(skorIndividu !== '' && skorIndividu !== null ? Number(skorIndividu) : 0);
               }
 
-              // Hitung rata-rata matematika murni secara otomatis
               let totalSkor = arraySkor.reduce((a, b) => a + b, 0);
-              let rataRata Akhir = (totalSkor / 10).toFixed(2);
+              let rataRataAkhir = (totalSkor / 10).toFixed(2);
 
               recordsNilaiKompilasi.push({
-                semester: barisMapel[m][1].toString().toUpperCase().trim(),
+                semester: barisMapel[m][2].toString().toUpperCase().trim(), // Semester sekarang di indeks 2 (Kolom C)
                 namaMapel: namaMataPelajaran,
                 scores: arraySkor,
                 rerata: rataRataAkhir
@@ -274,13 +274,11 @@
         let barisHtml = `<tr class="hover:bg-slate-50/80 transition text-center">
           <td class="py-3 px-4 font-bold text-slate-800 text-left border-r bg-white sticky left-0 z-5 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.03)]">${item.namaMapel}</td>`;
         
-        // Render 10 Kolom Nilai Sumatif dengan validasi KKM < 71 (Kriteria 5)
         item.scores.forEach(score => {
           let styleWarna = score < 71 ? 'text-red-600 font-extrabold bg-red-50/50' : 'text-slate-600 font-medium';
           barisHtml += `<td class="py-3 px-1 border-r ${styleWarna}">${score}</td>`;
         });
 
-        // Kolom Perhitungan Rata-rata Akhir di ujung kanan
         let warnaRerata = item.rerata < 71 ? 'text-red-600' : 'text-green-600';
         barisHtml += `<td class="py-3 px-4 font-bold bg-blue-50/60 ${warnaRerata} text-xs">${item.rerata}</td></tr>`;
 
