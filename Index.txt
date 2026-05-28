@@ -114,7 +114,7 @@
 
   <script>
     // ⚠️ MASUKKAN SPREADSHEET ID ANDA YANG TELAH DI-PUBLISH DI SINI
-    const SPREADSHEET_ID = '16_q4lRnRWSZtvpNRCo0A4ppciTQAtuFa';
+    const SPREADSHEET_ID = 'https://docs.google.com/spreadsheets/d/16_q4lRnRWSZtvpNRCo0A4ppciTQAtuFa/edit?usp=sharing&ouid=108679408273936057167&rtpof=true&sd=true';
 
     // Array 21 Nama Mata Pelajaran Sesuai Urutan Eksplisit Kriteria 2 (Sheet2 s.d Sheet22)
     const LIST_MAPEL = [
